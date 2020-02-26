@@ -1,0 +1,35 @@
+select 
+       fp.curr_parent_fac_id, 
+       mo.YYYYMM_NR, YYYY_NR, 
+       MM_NR,meet_status_cd,
+       HELD_YYYYMMDD_NR, 
+       MD_NOT_ATTEND_CMNT, 
+       IS_VALID,LAST_NM,
+       NOT_HELD_REASON_TXT,
+       FM.MEET_ID
+from 
+       AUD_FHR_QIFMM.AUD_FHR_QIFMM_USR.AUD_FHR_MEET fm, --HAS MEETID, MONID, PROVID
+       AUD_FHR_QIFMM.AUD_FHR_QIFMM_USR.AUD_FHR_MEET_ATT fa, --ATTENDEES + MEETID 
+       AUD_FHR_QIFMM.AUD_FHR_QIFMM_USR.AUD_FHR_MON mo, --MONID INFO
+       AUD_FHR_QIFMM.AUD_FHR_QIFMM_USR.AUD_FHR_PROV fp, --FACILITY INFO
+       AUD_FHR_QIFMM.AUD_FHR_QIFMM_USR.AUD_FHR_TITLE t --ATENDEE TITLE
+where 
+       mo.mon_id= fm.mon_id
+       and fm.meet_id = fa.meet_id
+       and fp.prov_id = fm.prov_id
+       and t.title_id = fa.title_id
+--and fp.CURR_PARENT_FAC_ID in (5684)
+       and mo.mon_id > 130
+--and fa.title_id in (5,4)
+       and is_md = 1
+       and mo.aud_current_row_flag ='Y'
+       and fm.aud_current_row_flag ='Y'
+       and fa.aud_current_row_flag ='Y'
+       and fp.aud_current_row_flag ='Y'
+       and t.aud_current_row_flag ='Y'
+       and mo.SOR_DML_ACTION <> 'D'
+       and fm.SOR_DML_ACTION <> 'D'
+       and fa.SOR_DML_ACTION<> 'D'
+       and fp.SOR_DML_ACTION <> 'D'
+    and t.SOR_DML_ACTION <> 'D'
+order by fp.CURR_PARENT_FAC_ID,HELD_YYYYMMDD_NR asc
